@@ -18,7 +18,7 @@ export default function ReactionButtons({ post }) {
       <button
         key={name}
         type="button"
-        className="bg-rose-700 rounded-full p-1 text-sm text-white font-semibold"
+        className="p-1 text-sm bg-gray-600 text-white rounded-full font-semibold"
         onClick={() =>
           dispatch(reactionAdded({ postId: post.id, reactions: name }))
         }

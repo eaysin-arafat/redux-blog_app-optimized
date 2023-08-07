@@ -1,19 +1,19 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectedPostbyId, updatePost, deletePost } from "./postsSlice";
+import { selectPostById, updatePost, deletePost } from "./postsSlice";
 import { selectAllUsers } from "../users/userSlice";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function EditPostForm() {
-  const { id } = useParams();
+  const { postId } = useParams();
   const navigate = useNavigate();
 
+  const post = useSelector((state) => selectPostById(state, Number(postId)));
   const users = useSelector(selectAllUsers);
-  const post = useSelector((state) => selectedPostbyId(state, Number(id)));
 
   const [title, settitle] = React.useState(post?.title);
   const [content, setcontent] = React.useState(post?.body);
-  const [userId, setuserId] = React.useState(post?.id);
+  const [userId, setuserId] = React.useState(post?.userId);
   const [RequestStatus, setRequestStatus] = React.useState("idle");
 
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ export default function EditPostForm() {
 
   const onTitleChanged = (e) => settitle(e.target.value);
   const onContentChanged = (e) => setcontent(e.target.value);
-  const onAuthorChanged = (e) => setuserId(e.target.value);
+  const onAuthorChanged = (e) => setuserId(Number(e.target.value));
 
   const canSave =
     [title, content, userId].every(Boolean) && RequestStatus === "idle";
@@ -50,7 +50,7 @@ export default function EditPostForm() {
         settitle("");
         setcontent("");
         setuserId("");
-        navigate(`/post/${id}`);
+        navigate(`/post/${postId}`);
       } catch (err) {
         console.error("Failed to save the post", err);
       } finally {
@@ -59,7 +59,7 @@ export default function EditPostForm() {
     }
   };
 
-  const userOptions = users.map((user) => (
+  const usersOptions = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.name}
     </option>
@@ -68,7 +68,7 @@ export default function EditPostForm() {
   const onDeletePostClicked = () => {
     try {
       setRequestStatus("pending");
-      dispatch(deletePost({ id: post.id }));
+      dispatch(deletePost({ id: post.id })).unwrap();
 
       settitle("");
       setcontent("");
@@ -104,7 +104,7 @@ export default function EditPostForm() {
             className="border gray-amber-300 mb-4"
           >
             <option value=""></option>
-            {userOptions}
+            {usersOptions}
           </select>
 
           <input
@@ -120,10 +120,11 @@ export default function EditPostForm() {
             type="button"
             onClick={onSavePostClicked}
             disabled={!canSave}
-            className="bg-gray-500 text-white font-bold"
+            className="bg-gray-500 text-white font-bold mb-4"
           >
             Save Post
           </button>
+
           <button
             type="button"
             className="bg-gray-500 text-white font-bold"

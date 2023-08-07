@@ -2,8 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewPost } from "./postsSlice";
 import { selectAllUsers } from "../users/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function AddPostForm() {
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
   const [title, settitle] = React.useState("");
   const [content, setcontent] = React.useState("");
   const [userId, setuserId] = React.useState("");
@@ -14,8 +19,6 @@ export default function AddPostForm() {
   const onTitleChanged = (e) => settitle(e.target.value);
   const onContentChanged = (e) => setcontent(e.target.value);
   const onAuthorChanged = (e) => setuserId(e.target.value);
-
-  const dispatch = useDispatch();
 
   const canSave =
     [title, content, userId].every(Boolean) && addRequestStatus === "idle";
@@ -37,7 +40,7 @@ export default function AddPostForm() {
     }
   };
 
-  const userOptions = users.map((user) => (
+  const usersOptions = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.name}
     </option>
@@ -46,8 +49,11 @@ export default function AddPostForm() {
   return (
     <React.Fragment>
       <section className="mb-6">
-        <h2 className="text-3xl font-bold mb-4">Add a new Post</h2>
-        <form action="" className="flex flex-col justify-center pr-12">
+        <h2 className="text-xl mt-6 font-bold mb-4">Add a new Post</h2>
+        <form
+          htmlFor="postTitle"
+          className="flex flex-col justify-center pr-12"
+        >
           <input
             type="text"
             id="postTitle"
@@ -66,7 +72,7 @@ export default function AddPostForm() {
             className="border gray-amber-300 mb-4"
           >
             <option value=""></option>
-            {userOptions}
+            {usersOptions}
           </select>
 
           <input

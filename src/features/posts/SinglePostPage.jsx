@@ -2,13 +2,12 @@ import { useSelector } from "react-redux";
 import PostAuthor from "./PostAuthor";
 import TimeAgo from "./TImeAgo";
 import ReactionButtons from "./ReactionButtons";
-import { selectedPostbyId } from "./postsSlice";
+import { selectPostById } from "./postsSlice";
 import { Link, useParams } from "react-router-dom";
 
 export const SinglePostPage = () => {
-  const { id } = useParams();
-  const post = useSelector((state) => selectedPostbyId(state, Number(id)));
-  console.log(post);
+  const { postId } = useParams();
+  const post = useSelector((state) => selectPostById(state, Number(postId)));
 
   if (!post) {
     return (
@@ -19,7 +18,7 @@ export const SinglePostPage = () => {
   }
   return (
     <>
-      <article key={post.id} className="flex flex-col gap-2">
+      <article className="flex flex-col gap-2">
         <h3 className="text-xl font-semibold">{post.title}</h3>
         <p className="text-lg text-gray-700 font-semibold text-justify">
           {post.body}
